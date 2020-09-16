@@ -1,0 +1,40 @@
+<div class="row">
+	<form *ngIf="formLogin" [formGroup]="formLogin" (ngSubmit)="onSubmit()" class="col-md-6 offset-md-3" novalidate>
+		<div class="form-group">
+			<label>Email</label>
+			<input class="form-control" formControlName="email">
+		</div>
+		<div *ngFor="let validation of formLoginValidationMessages.email">
+			<div class="alert alert-danger" *ngIf="formLogin.get('email').hasError(validation.type) && (formLogin.get('email').dirty || formLogin.get('email').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Password</label>
+			<input class="form-control" formControlName="password">
+		</div>
+		<div *ngFor="let validation of formLoginValidationMessages.password">
+			<div class="alert alert-danger" *ngIf="formLogin.get('password').hasError(validation.type) && (formLogin.get('password').dirty || formLogin.get('password').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Captcha</label>
+			<div #captcha></div>
+			<input class="form-control" formControlName="captcha">
+		</div>
+		<div *ngFor="let validation of formLoginValidationMessages.captcha">
+			<div class="alert alert-danger" *ngIf="formLogin.get('captcha').hasError(validation.type) && (formLogin.get('captcha').dirty || formLogin.get('captcha').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div *ngFor="let validation of formLoginValidationMessages.error">
+			<div class="alert alert-danger" *ngIf="formLogin.get('error').hasError(validation.type)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<button class="form-control" [disabled]="!formLogin.valid || submitted">Log In</button>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,60 @@
+<div class="row" *ngIf="email">
+	<p>Please click on the link sent to your email address <b>{{ email }}</b>, to confirm your registration</p>
+</div>
+<div class="row" *ngIf="!email">
+	<form *ngIf="formRegister" [formGroup]="formRegister" (ngSubmit)="onSubmit()" class="col-md-6 offset-md-3" novalidate>
+		<div class="form-group">
+			<label>Email</label>
+			<input class="form-control" formControlName="email">
+		</div>
+		<div *ngFor="let validation of formRegisterValidationMessages.email">
+			<div class="alert alert-danger" *ngIf="formRegister.get('email').hasError(validation.type) && (formRegister.get('email').dirty || formRegister.get('email').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Password</label>
+			<input class="form-control" formControlName="password">
+		</div>
+		<div *ngFor="let validation of formRegisterValidationMessages.password">
+			<div class="alert alert-danger" *ngIf="formRegister.get('password').hasError(validation.type) && (formRegister.get('password').dirty || formRegister.get('password').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Password confirmation</label>
+			<input class="form-control" formControlName="passwordConfirmation">
+		</div>
+		<div *ngFor="let validation of formRegisterValidationMessages.passwordConfirmation">
+			<div class="alert alert-danger" *ngIf="formRegister.get('passwordConfirmation').hasError(validation.type) && (formRegister.get('passwordConfirmation').dirty || formRegister.get('passwordConfirmation').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Captcha</label>
+			<div #captcha></div>
+			<input class="form-control" formControlName="captcha">
+		</div>
+		<div *ngFor="let validation of formRegisterValidationMessages.captcha">
+			<div class="alert alert-danger" *ngIf="formRegister.get('captcha').hasError(validation.type) && (formRegister.get('captcha').dirty || formRegister.get('captcha').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div class="form-group form-check">
+			<input type="checkbox" formControlName="acceptTerms" id="acceptTerms" class="form-check-input" [ngClass]="{ 'is-invalid': submitted && formRegister.controls['acceptTerms'].errors }" />
+			<label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
+			<div *ngIf="submitted && formRegister.acceptTerms.errors" class="invalid-feedback">Accept Ts & Cs is required</div>
+		</div>
+		<div *ngFor="let validation of formRegisterValidationMessages.acceptTerms">
+			<div class="alert alert-danger" *ngIf="formRegister.get('acceptTerms').hasError(validation.type) && (formRegister.get('acceptTerms').dirty || formRegister.get('acceptTerms').touched)">
+				{{ validation.message }}
+			</div>
+		</div>
+		<div *ngIf="error" class="alert alert-danger">
+			{{ error }}
+		</div>
+		<div class="form-group">
+			<button class="form-control" [disabled]="!formRegister.valid || submitted">Register</button>
+		</div>
+	</form>
+</div>

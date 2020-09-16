@@ -1,0 +1,46 @@
+{
+	"name": "nodejs-mongodb-api-boilerplate",
+	"version": "1.0.0",
+	"description": "A boilerplate for Node.js RESTful API with MongoDB",
+	"scripts": {
+		"start": "node index.js",
+		"lint": "standard"
+	},
+	"keywords": [
+		"RESTful",
+		"Node.js",
+		"MongoDB",
+		"Mongoose",
+		"Boilerplate"
+	],
+	"author": "Chris Lee",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/chrisleekr/nodejs-mongodb-api-boilerplate.git"
+	},
+	"devDependencies": {
+		"eslint": "^6.8.0",
+		"eslint-config-airbnb": "^18.2.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-import": "^2.22.0",
+		"eslint-plugin-jsx-a11y": "^6.3.1",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"eslint-plugin-promise": "^4.2.1",
+		"prettier": "^1.19.1",
+		"standard": "^14.3.4"
+	},
+	"dependencies": {
+		"@lykmapipo/mongoose-faker": "^0.10.26",
+		"connect-mongo": "^3.2.0",
+		"cookie-parser": "^1.4.5",
+		"cors": "^2.8.5",
+		"express": "^4.17.1",
+		"express-session": "^1.17.1",
+		"faker": "^5.1.0",
+		"moment": "^2.27.0",
+		"mongoose": "^5.10.2",
+		"svg-captcha": "^1.4.0"
+	}
+}
