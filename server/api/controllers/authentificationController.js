@@ -4,9 +4,7 @@ const moment = require('moment');
 moment.locale('fr');
 
 const captchaController = require('./captchaController');
-const responseController = require('./responseController');
 const uuid = require('../../uuid');
-
 const User = require('../models/user');
 
 exports.logIn = function(request, response, next) {
@@ -21,17 +19,17 @@ exports.logIn = function(request, response, next) {
 		if(user) {
 			if(user.emailConfirmed) {
 				user.generateApiToken();
-				responseController.data(response, { token: user.api.token });
+				response.status(200).json({ token: user.api.token });
 			} else {
-				responseController.formError(response, 'error', 'emailNotConfirmed');
+				response.status(406).json([{ key: 'error', value: 'emailNotConfirmed' }]);
 			}
 		} else {
 			response.status(404).end();
 		}
 	}, (reason) => {
-		responseController.systemError(response, reason);
+		response.status(406).json([{ key: 'error', value: 'system' }]);
 	}).catch((error) => {
-		responseController.systemError(response, error.message);
+		response.status(406).json([{ key: 'error', value: 'system' }]);
 	});
 };
 
@@ -45,25 +43,25 @@ exports.register = function(request, response, next) {
 	
 	User.findOne({ 'email.value': email }, (error, user) => {
 		if (error) {
-			responseController.systemError(response, error.message);
+			response.status(406).json([{ key: 'error', value: 'system' }]);
 			return;
 		}
 		if(user) {
-			responseController.formError(response, 'email', 'exist');
+			response.status(406).json([{ key: 'email', value: 'exist' }]);
 			return;
 		}
 
 		let userEmail = { value: email, token: uuid.create() };
 		
 		User.create({ email: userEmail, password: password }).then((user) => {
-			responseController.data(response, { email: user.email.value });
+			response.status(200).json({ email: user.email.value });
 		}, (reason) => {
-			responseController.systemError(response, reason);
+			response.status(406).json([{ key: 'error', value: 'system' }]);
 		}).catch((error) => {
-			responseController.systemError(response, error.message);
+			response.status(406).json([{ key: 'error', value: 'system' }]);
 		});
 	}).catch((error) => {
-		responseController.systemError(response);
+		response.status(406).json([{ key: 'error', value: 'system' }]);
 	});
 };
 
