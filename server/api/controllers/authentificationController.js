@@ -5,6 +5,7 @@ moment.locale('fr');
 
 const captchaController = require('./captchaController');
 const responseController = require('./responseController');
+const uuid = require('../../uuid');
 
 const User = require('../models/user');
 
@@ -52,7 +53,7 @@ exports.register = function(request, response, next) {
 			return;
 		}
 
-		let userEmail = { value: email, token: '' };
+		let userEmail = { value: email, token: uuid.create() };
 		
 		User.create({ email: userEmail, password: password }).then((user) => {
 			responseController.data(response, { email: user.email.value });
