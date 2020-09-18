@@ -10,7 +10,7 @@ import { User } from 'src/app/models/user';
 })
 export class EmailConfirmationComponent implements OnInit {
 	
-	public user: User;
+	public user: User = null;
 	public error: string = null;
 	
 	constructor(private api: ApiService, private activatedRoute: ActivatedRoute) { }

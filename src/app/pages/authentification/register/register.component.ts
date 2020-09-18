@@ -60,7 +60,7 @@ export class RegisterComponent implements OnInit {
 			email: ['test@domain.com', [Validators.required, Validators.email] ],
 			password: ['MyPassword1', [Validators.required, Validators.minLength(8), Validators.maxLength(32), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$')] ],
 			passwordConfirmation: ['MyPassword1', Validators.required ],
-			captcha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)] ],
+			captcha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)] ],
 			acceptTerms: [true, Validators.requiredTrue]
 		}, {
 			validator: MustMatch('password', 'passwordConfirmation')

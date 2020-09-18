@@ -6,7 +6,7 @@ moment.locale('fr');
 
 exports.getCaptcha = function(request, response, next) {
 	var captcha = svgCaptcha.create({
-		size: 8,
+		size: 6,
 		noise: 5
 	});
 	request.session.captcha = {

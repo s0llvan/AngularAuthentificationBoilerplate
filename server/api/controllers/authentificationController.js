@@ -91,8 +91,8 @@ exports.emailConfirmation = function(request, response, next) {
 			if(!user) {
 				response.status(404).end();
 			} else {
-				user.emailConfirmed = true;
-				user.emailConfirmationToken = null;
+				user.email.confirmed = true;
+				user.email.token = null;
 				user.save();
 
 				response.json(user);
