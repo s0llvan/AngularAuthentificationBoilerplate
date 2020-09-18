@@ -89,7 +89,7 @@ UserSchema.methods.generateApiToken = function() {
 	let expirationDate = new Date();
 	expirationDate.setTime(expirationDate.getTime() + (2*60*60*1000));
 	
-	this.api.token = createUUID();
+	this.api.token = uuid.create();
 	this.api.expiration = expirationDate;
 	this.save();
 }

@@ -31,8 +31,8 @@ export class LoginComponent implements OnInit {
 		],
 		'captcha': [
 			{ type: 'required', message: 'Captcha is required' },
-			{ type: 'minlength', message: 'Captcha must be at least 8 characters long' },
-			{ type: 'maxlength', message: 'Captcha must be at least 8 characters long' },
+			{ type: 'minlength', message: 'Captcha must be at least 6 characters long' },
+			{ type: 'maxlength', message: 'Captcha must be at least 6 characters long' },
 			{ type: 'wrong', message: 'Wrong captcha' },
 			{ type: 'expired', message: 'Captcha expired' }
 		],
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
 		this.formLogin = this.formBuilder.group({
 			email: ['test@domain.com', [Validators.required, Validators.email] ],
 			password: ['MyPassword1', [Validators.required, Validators.minLength(8), Validators.maxLength(32), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$')] ],
-			captcha: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)] ],
+			captcha: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)] ],
 			error: ['']
 		});
 	}

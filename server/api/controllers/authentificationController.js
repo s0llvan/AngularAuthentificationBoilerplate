@@ -15,9 +15,9 @@ exports.logIn = function(request, response, next) {
 		return;
 	}
 	
-	User.findOne({ email: email, password: password }).then((user) => {
+	User.findOne({ "email.value": email, password: password }).then((user) => {
 		if(user) {
-			if(user.emailConfirmed) {
+			if(user.email.confirmed) {
 				user.generateApiToken();
 				response.status(200).json({ token: user.api.token });
 			} else {

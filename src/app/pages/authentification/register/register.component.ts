@@ -33,8 +33,8 @@ export class RegisterComponent implements OnInit {
 		],
 		'captcha': [
 			{ type: 'required', message: 'Captcha is required' },
-			{ type: 'minlength', message: 'Captcha must be at least 8 characters long' },
-			{ type: 'maxlength', message: 'Captcha must be at least 8 characters long' },
+			{ type: 'minlength', message: 'Captcha must be at least 6 characters long' },
+			{ type: 'maxlength', message: 'Captcha must be at least 6 characters long' },
 			{ type: 'wrong', message: 'Wrong captcha' },
 			{ type: 'expired', message: 'Captcha expired' }
 		],
