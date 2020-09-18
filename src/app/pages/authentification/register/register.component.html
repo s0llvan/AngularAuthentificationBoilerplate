@@ -8,7 +8,7 @@
 			<input class="form-control" formControlName="email">
 		</div>
 		<div *ngFor="let validation of formRegisterValidationMessages.email">
-			<div class="alert alert-danger" *ngIf="formRegister.get('email').hasError(validation.type) && (formRegister.get('email').dirty || formRegister.get('email').touched)">
+			<div class="alert alert-danger" *ngIf="formRegister.get('email').hasError(validation.type) && ((formRegister.get('email').dirty || formRegister.get('email').touched) || submittedOnce)">
 				{{ validation.message }}
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 			<input class="form-control" formControlName="password">
 		</div>
 		<div *ngFor="let validation of formRegisterValidationMessages.password">
-			<div class="alert alert-danger" *ngIf="formRegister.get('password').hasError(validation.type) && (formRegister.get('password').dirty || formRegister.get('password').touched)">
+			<div class="alert alert-danger" *ngIf="formRegister.get('password').hasError(validation.type) && ((formRegister.get('password').dirty || formRegister.get('password').touched) || submittedOnce)">
 				{{ validation.message }}
 			</div>
 		</div>

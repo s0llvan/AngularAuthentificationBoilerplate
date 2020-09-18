@@ -13,6 +13,7 @@ export class RegisterComponent implements OnInit {
 	
 	public formRegister: FormGroup;
 	public submitted: boolean = false;
+	public submittedOnce: boolean = false;
 	
 	@ViewChild('captcha') captcha: ElementRef;
 	
@@ -84,14 +85,15 @@ export class RegisterComponent implements OnInit {
 						[value]: true
 					}, { emitEvent: true });
 				});
-				this.refreshCaptcha();
 				break;
 				
 				default:
 				this.error = 'An error was occured';
 				break;
 			}
+			this.submittedOnce = true;
 			this.submitted = false;
+			this.refreshCaptcha();
 		});
 	}
 	
