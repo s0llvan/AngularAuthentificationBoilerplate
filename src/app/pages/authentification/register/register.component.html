@@ -43,7 +43,7 @@
 		<div class="form-group form-check">
 			<input type="checkbox" formControlName="acceptTerms" id="acceptTerms" class="form-check-input" [ngClass]="{ 'is-invalid': submitted && formRegister.controls['acceptTerms'].errors }" />
 			<label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>
-			<div *ngIf="submitted && formRegister.acceptTerms.errors" class="invalid-feedback">Accept Ts & Cs is required</div>
+			<div *ngIf="submitted && formRegister.get('acceptTerms').errors" class="invalid-feedback">Accept Ts & Cs is required</div>
 		</div>
 		<div *ngFor="let validation of formRegisterValidationMessages.acceptTerms">
 			<div class="alert alert-danger" *ngIf="formRegister.get('acceptTerms').hasError(validation.type) && (formRegister.get('acceptTerms').dirty || formRegister.get('acceptTerms').touched)">

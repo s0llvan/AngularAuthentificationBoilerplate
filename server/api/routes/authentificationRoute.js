@@ -3,19 +3,13 @@
 module.exports = function(router) {
 	const authentificationController = require('../controllers/authentificationController');
 	
-	/*
-	app
-	.route('/login')
-	.post(authentificationController.logIn);
-	*/
 	router
 	.post('/login', authentificationController.validate('logIn'), authentificationController.logIn)
 
-	/*
-	app
-	.route('/register')
-	.post(authentificationController.register);
+	router
+	.post('/register', authentificationController.validate('register'), authentificationController.register)
 
+	/*
 	app
 	.route('/email-confirm/:token')
 	.get(authentificationController.emailConfirmation);

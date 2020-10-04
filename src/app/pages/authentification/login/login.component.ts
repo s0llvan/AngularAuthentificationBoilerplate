@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
 	
 	@ViewChild('captcha') captcha: ElementRef;
 	
-	public email: string = null;
+	public error: string = null;
 	
 	public formLoginValidationMessages = {
 		'email': [
@@ -76,6 +76,8 @@ export class LoginComponent implements OnInit {
 						[msg]: true
 					}, { emitEvent: true });
 				});
+			} else {
+				this.error = 'An error was occured';
 			}
 			this.submitted = false;
 			this.refreshCaptcha();

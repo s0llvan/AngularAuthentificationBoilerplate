@@ -12,7 +12,7 @@ const { checkEmailExists, checkEmailNotExists } = require('../../utils/validator
 function checkCaptcha(value, { req, loc, path }) {
 	let captcha = req.session.captcha;
 	req.session.captcha = null;
-
+	
 	let expiration = moment().diff(captcha.expiration, 'seconds');
 	
 	return value == captcha.text && expiration < 0;
@@ -66,23 +66,34 @@ exports.validate = (method) => {
 	}
 }
 
-exports.register = function(request, response, next) {
-	let email = request.body.email;
-	let password = request.body.password;
-	
-	if(!captchaController.verify(request, response)) {
-		return;
+exports.register = function(request, response, next) {	
+	try {
+		const errors = validationResult(request);
+		
+		if (!errors.isEmpty()) {
+			response.status(422).json({ errors: errors.array() });
+			return;
+		}
+		
+		let email = request.body.email;
+		let password = request.body.password;
+		
+		email = { value: email, token: uuid.create() };
+		
+		User.create({ email: email, password: password }).then((user) => {
+			if(user) {
+				response.status(422).json({ errors: [{ location: 'body', param: 'password', value: null, msg: 'wrong' }]});
+			} else {
+				response.status(500);
+			}
+		}, (reason) => {
+			response.status(422).json({ errors: [{ location: 'database', param: null, value: reason, msg: '' }]});
+		}).catch((error) => {
+			response.status(422).json({ errors: [{ location: 'database', param: null, value: error, msg: '' }]});
+		});
+	} catch(error) {
+		return next(error);
 	}
-	
-	email = { value: email, token: uuid.create() };
-	
-	User.create({ email: email, password: password }).then((user) => {
-		response.json({ email: user.email.value });
-	}, (reason) => {
-		response.status(406).json([{ key: 'error', value: 'system' }]);
-	}).catch((error) => {
-		response.status(406).json([{ key: 'error', value: 'system' }]);
-	});
 };
 
 exports.verify = function(request, response, next) {

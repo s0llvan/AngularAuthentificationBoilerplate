@@ -75,21 +75,17 @@ export class RegisterComponent implements OnInit {
 		this.api.register(this.formRegister.get('email').value, this.formRegister.get('password').value, this.formRegister.get('captcha').value).subscribe((data: any) => {
 			this.email = data.email;
 			this.submitted = false;
-		}, (error) => {
-			switch (error.status) {
-				case 406:
-				error.error.forEach((field) => {
-					let key = field.key;
-					let value = field.value;
-					this.formRegister.controls[key].setErrors({
-						[value]: true
+		}, (response) => {
+			if(response.status == 422) {
+				response.error.errors.forEach((field) => {
+					let param = field.param;
+					let msg = field.msg;
+					this.formRegister.controls[param].setErrors({
+						[msg]: true
 					}, { emitEvent: true });
 				});
-				break;
-				
-				default:
+			} else {
 				this.error = 'An error was occured';
-				break;
 			}
 			this.submittedOnce = true;
 			this.submitted = false;
