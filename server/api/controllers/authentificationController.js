@@ -6,60 +6,80 @@ moment.locale('fr');
 const captchaController = require('./captchaController');
 const uuid = require('../../uuid');
 const User = require('../models/user');
+const { body, validationResult, param, check } = require('express-validator/check');
+const { checkEmailExists, checkEmailNotExists } = require('../../utils/validator');
 
-exports.logIn = function(request, response, next) {
-	let email = request.body.email;
-	let password = request.body.password;
+function checkCaptcha(value, { req, loc, path }) {
+	let captcha = req.session.captcha;
+	req.session.captcha = null;
+
+	let expiration = moment().diff(captcha.expiration, 'seconds');
 	
-	if(!captchaController.verifyCaptcha(request, response)) {
-		return;
-	}
-	
-	User.findOne({ "email.value": email, password: password }).then((user) => {
-		if(user) {
-			if(user.email.confirmed) {
-				user.generateApiToken();
-				response.status(200).json({ token: user.api.token });
-			} else {
-				response.status(406).json([{ key: 'error', value: 'emailNotConfirmed' }]);
-			}
-		} else {
-			response.status(404).end();
+	return value == captcha.text && expiration < 0;
+}
+
+exports.logIn = async (request, response, next) => {
+	try {
+		const errors = validationResult(request);
+		
+		if (!errors.isEmpty()) {
+			response.status(422).json({ errors: errors.array() });
+			return;
 		}
-	}, (reason) => {
-		response.status(406).json([{ key: 'error', value: 'system' }]);
-	}).catch((error) => {
-		response.status(406).json([{ key: 'error', value: 'system' }]);
-	});
-};
+		
+		User.findOne({ "email.value": request.body.email, password: request.body.password }).then((user) => {
+			if(user) {
+				user.generateApiToken();
+				response.json({ token: user.api.token });
+			} else {
+				response.status(422).json({ errors: [{ location: 'body', param: 'password', value: null, msg: 'wrong' }]});
+			}
+		}, (reason) => {
+			response.status(422).json({ errors: [{ location: 'database', param: null, value: reason, msg: '' }]});
+		}).catch((error) => {
+			response.status(422).json({ errors: [{ location: 'database', param: null, value: error, msg: '' }]});
+		});
+	} catch(error) {
+		return next(error);
+	}
+}
+
+exports.validate = (method) => {
+	switch (method) {
+		case 'logIn': {
+			return [ 
+				body('email').exists().normalizeEmail().isEmail().withMessage('email'),
+				body('email').custom(checkEmailExists),
+				body('password').exists().isLength({ min: 8, max: 32 }).matches('[0-9]').matches('[a-z]').matches('[A-Z]'),
+				body('captcha').exists().custom(checkCaptcha).withMessage('wrong')
+			]   
+		}
+		case 'register': {
+			return [ 
+				body('email').exists().normalizeEmail().isEmail().withMessage('email'),
+				body('email').custom(checkEmailNotExists),
+				body('password').exists().isLength({ min: 8, max: 32 }),
+				body('captcha').exists().custom(checkCaptcha).withMessage('wrong'),
+				body('acceptTerms').isBoolean().withMessage('wrong')
+			]   
+		}
+	}
+}
 
 exports.register = function(request, response, next) {
 	let email = request.body.email;
 	let password = request.body.password;
 	
-	if(!captchaController.verifyCaptcha(request, response)) {
+	if(!captchaController.verify(request, response)) {
 		return;
 	}
 	
-	User.findOne({ 'email.value': email }, (error, user) => {
-		if (error) {
-			response.status(406).json([{ key: 'error', value: 'system' }]);
-			return;
-		}
-		if(user) {
-			response.status(406).json([{ key: 'email', value: 'exist' }]);
-			return;
-		}
-
-		let userEmail = { value: email, token: uuid.create() };
-		
-		User.create({ email: userEmail, password: password }).then((user) => {
-			response.status(200).json({ email: user.email.value });
-		}, (reason) => {
-			response.status(406).json([{ key: 'error', value: 'system' }]);
-		}).catch((error) => {
-			response.status(406).json([{ key: 'error', value: 'system' }]);
-		});
+	email = { value: email, token: uuid.create() };
+	
+	User.create({ email: email, password: password }).then((user) => {
+		response.json({ email: user.email.value });
+	}, (reason) => {
+		response.status(406).json([{ key: 'error', value: 'system' }]);
 	}).catch((error) => {
 		response.status(406).json([{ key: 'error', value: 'system' }]);
 	});
@@ -94,7 +114,7 @@ exports.emailConfirmation = function(request, response, next) {
 				user.email.confirmed = true;
 				user.email.token = null;
 				user.save();
-
+				
 				response.json(user);
 			}
 		}, (reason) => {
@@ -110,5 +130,5 @@ exports.emailConfirmation = function(request, response, next) {
 exports.logOut = function(request, response, next) {
 	let user = request.user;
 	user.resetApiToken();
-	response.status(200).end();
+	response.end();
 };

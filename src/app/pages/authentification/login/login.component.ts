@@ -21,10 +21,14 @@ export class LoginComponent implements OnInit {
 	public formLoginValidationMessages = {
 		'email': [
 			{ type: 'required', message: 'Email is required' },
-			{ type: 'email', message: 'Enter a valid email' }
+			{ type: 'email', message: 'Enter a valid email' },
+			{ type: 'not_exist', message: 'Email not exist' },
+			{ type: 'blocked', message: 'Account blocked' },
+			{ type: 'not_confirmed', message: 'Email not confirmed' },
 		],
 		'password': [
 			{ type: 'required', message: 'Password is required' },
+			{ type: 'wrong', message: 'Wrong password' },
 			{ type: 'minlength', message: 'Password must be at least 8 characters long' },
 			{ type: 'maxlength', message: 'Password must be at least 32 characters long' },
 			{ type: 'pattern', message: 'Your password must contain at least one uppercase, one lowercase, and one number' }
@@ -35,10 +39,6 @@ export class LoginComponent implements OnInit {
 			{ type: 'maxlength', message: 'Captcha must be at least 6 characters long' },
 			{ type: 'wrong', message: 'Wrong captcha' },
 			{ type: 'expired', message: 'Captcha expired' }
-		],
-		'error': [
-			{ type: 'emailNotConfirmed', message: 'Please click on the link sent to your email address to confirm your registration' },
-			{ type: 'system', message: 'An error was occured' }
 		]
 	}
 	
@@ -67,29 +67,15 @@ export class LoginComponent implements OnInit {
 			this.submitted = false;
 			
 			this.router.navigateByUrl('/');
-		}, (error) => {
-			switch (error.status) {
-				case 406:
-				error.error.forEach((field) => {
-					let key = field.key;
-					let value = field.value;
-					this.formLogin.controls[key].setErrors({
-						[value]: true
+		}, (response) => {
+			if(response.status == 422) {
+				response.error.errors.forEach((field) => {
+					let param = field.param;
+					let msg = field.msg;
+					this.formLogin.controls[param].setErrors({
+						[msg]: true
 					}, { emitEvent: true });
 				});
-				break;
-
-				case 404:
-				this.formLogin.controls['error'].setErrors({
-					'emailNotConfirmed': true
-				}, { emitEvent: true });
-				break;
-				
-				default:
-				this.formLogin.controls['error'].setErrors({
-					'system': true
-				}, { emitEvent: true });
-				break;
 			}
 			this.submitted = false;
 			this.refreshCaptcha();
@@ -97,7 +83,7 @@ export class LoginComponent implements OnInit {
 	}
 	
 	private refreshCaptcha(): void {
-		//this.formRegister.controls['captcha'].patchValue(null, { emitEvent: false });
+		//this.formLogin.controls['captcha'].setValue(null, { emitEvent: false });
 		
 		this.api.getCaptcha().subscribe((response) => {
 			this.captcha.nativeElement.innerHTML = response;

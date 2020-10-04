@@ -1,9 +1,8 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function(router) {
 	const captchaController = require('../controllers/captchaController');
 	
-	app
-	.route('/captcha')
-	.get(captchaController.getCaptcha);
+	router
+	.get('/captcha', captchaController.get);
 };

@@ -1,6 +1,6 @@
 const express = require('express');
-
 const app = express();
+const router = express.Router()
 
 const port = process.env.PORT || 3000;
 
@@ -10,6 +10,7 @@ const MongoStore = require('connect-mongo')(session);
 const cors = require('cors');
 
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 
 mongoose.Promise = global.Promise;
 mongoose
@@ -29,12 +30,14 @@ useUnifiedTopology: true
 		cookie: { secure: false, maxAge: 3600000 },
 		store: new MongoStore({ mongooseConnection: mongoose.connection }),
 	}));
-	
+	app.use(expressValidator());
+	app.use('/api', router)
+
 	var captchaRoute = require('./api/routes/captchaRoute');
-	captchaRoute(app);
+	captchaRoute(router);
 	
 	var authentificationRoute = require('./api/routes/authentificationRoute');
-	authentificationRoute(app);
+	authentificationRoute(router);
 
 	app.get('/', (request, response) => {
 		response.status(200).end();

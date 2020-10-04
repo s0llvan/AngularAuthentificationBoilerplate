@@ -9,7 +9,7 @@ import { User } from '../models/user';
 })
 export class ApiService {
 	
-	private apiUrl: string = 'http://localhost:3000/';
+	private apiUrl: string = 'http://localhost:3000/api/';
 
 	constructor(private http: HttpClient) { }
 	
