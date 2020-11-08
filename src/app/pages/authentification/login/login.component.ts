@@ -61,6 +61,7 @@ export class LoginComponent implements OnInit {
 	
 	private onSubmit(): void {
 		this.submitted = true;
+		this.formLogin.controls['captcha'].reset();
 		
 		this.api.login(this.formLogin.get('email').value, this.formLogin.get('password').value, this.formLogin.get('captcha').value).subscribe((response: any) => {
 			this.global.setToken(response.token);
@@ -85,7 +86,7 @@ export class LoginComponent implements OnInit {
 	}
 	
 	private refreshCaptcha(): void {
-		//this.formLogin.controls['captcha'].setValue(null, { emitEvent: false });
+		
 		
 		this.api.getCaptcha().subscribe((response) => {
 			this.captcha.nativeElement.innerHTML = response;

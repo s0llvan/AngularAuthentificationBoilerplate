@@ -94,8 +94,8 @@ export class RegisterComponent implements OnInit {
 	}
 	
 	private refreshCaptcha(): void {
-		//this.formRegister.controls['captcha'].patchValue(null, { emitEvent: false });
-		
+		this.formRegister.controls['captcha'].reset();
+
 		this.api.getCaptcha().subscribe((response) => {
 			this.captcha.nativeElement.innerHTML = response;
 		});
